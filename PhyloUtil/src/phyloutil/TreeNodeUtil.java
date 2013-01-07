@@ -1161,4 +1161,66 @@ public final class TreeNodeUtil {
 
 		return _root;
 	}
+
+	public static TreeNode removeNode(TreeNode node) {
+		TreeNode parent = node.getParent();
+		TreeNode root = node.getRoot();
+		
+		if (parent != null) {
+
+			if (parent.isRoot()) {
+				if (parent.getChildrenCount() > 2) {
+					parent.removeChild(node);
+					return parent;
+				} else {
+					TreeNode child = null;
+					for (TreeNode child2 : parent.getChildren()) {
+						if (!child2.equals(node)) {
+							child = child2;
+						}
+					}
+					child.setParent(null);
+					return child;
+				}
+			} else {
+				parent.removeChild(node);
+				if (parent.getChildrenCount() == 0) {
+					removeNode(parent);
+				} else if (parent.getChildrenCount() == 1) {
+					TreeNode child = null;
+					for (TreeNode child2 : parent.getChildren()) {
+						if (!child2.equals(node)) {
+							child = child2;
+						}
+					}
+					if (child != null) {
+						child.setLength(parent.getLength() + child.getLength());
+						parent.getParent().addChild(child);
+						child.setParent(parent.getParent());
+						parent.getParent().removeChild(parent);
+					}
+				} else {
+					System.err.println ("Error: parent with more than 1 child : " + parent.getChildrenCount());
+					System.err.println (parent);
+					System.exit(1);
+				}
+			}
+			return root;
+		} else {
+			return null;
+		}
+	}
+
+	public static TreeNode removeNode(TreeNode tree, List<String> list) {
+		
+		TreeNode reduced = tree;
+		
+		for (String name : list) {
+			TreeNode node = reduced.find(name);
+			if (node != null) {
+				reduced = removeNode(node);
+			}
+		}
+		return reduced;
+	}
 }
