@@ -1165,7 +1165,7 @@ public final class TreeNodeUtil {
 	public static TreeNode removeNode(TreeNode node) {
 		TreeNode parent = node.getParent();
 		TreeNode root = node.getRoot();
-		
+
 		if (parent != null) {
 
 			if (parent.isRoot()) {
@@ -1200,8 +1200,8 @@ public final class TreeNodeUtil {
 						parent.getParent().removeChild(parent);
 					}
 				} else {
-					System.err.println ("Error: parent with more than 1 child : " + parent.getChildrenCount());
-					System.err.println (parent);
+					System.err.println("Error: parent with more than 1 child : " + parent.getChildrenCount());
+					System.err.println(parent);
 					System.exit(1);
 				}
 			}
@@ -1212,9 +1212,9 @@ public final class TreeNodeUtil {
 	}
 
 	public static TreeNode removeNode(TreeNode tree, List<String> list) {
-		
+
 		TreeNode reduced = tree;
-		
+
 		for (String name : list) {
 			TreeNode node = reduced.find(name);
 			if (node != null) {
@@ -1222,5 +1222,52 @@ public final class TreeNodeUtil {
 			}
 		}
 		return reduced;
+	}
+
+	/**
+	 * Transforms branch lengths by taking log10
+	 * 
+	 * @param root
+	 *            {@link TreeNode} root of the tree
+	 * 
+	 * @return {@link TreeNode} a log10-transformed version of the original tree
+	 */
+
+	public static TreeNode transform(TreeNode root) {
+		return transform(root, 1);
+	}
+
+	/**
+	 * Transforms branch lengths by taking log10
+	 * 
+	 * @param root
+	 *            {@link TreeNode} root of the tree
+	 * 
+	 * @param scale
+	 *            scaling the branch lengths before the log10-transformation
+	 * 
+	 * @return {@link TreeNode} a log10-transformed version of the original tree
+	 */
+
+	public static TreeNode transform(TreeNode root, float scale) {
+		TreeNode log10 = new TreeNode();
+
+		log10.setId(root.getId());
+		log10.setLabel(root.getLabel());
+		log10.setLevel(root.getLevel());
+
+		float lengthOriginal = root.getLength();
+		float length = lengthOriginal > 0 ? (float) Math.log10(scale * lengthOriginal) : 0;
+
+		log10.setLength(length);
+
+		if (!root.isLeaf()) {
+			for (TreeNode child : root.getChildren()) {
+				TreeNode node = transform(child, scale);
+				node.setParent(log10);
+				log10.addChild(node);
+			}
+		}
+		return log10;
 	}
 }
