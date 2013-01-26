@@ -701,6 +701,7 @@ public final class TreeNodeUtil {
 	 *            {@link TreeNode} outgroup node
 	 * @return Rerooted {@link TreeNode}
 	 */
+
 	private static TreeNode _reroot(TreeNode outgroup) {
 
 		if (outgroup.isRoot()) {
@@ -708,6 +709,15 @@ public final class TreeNodeUtil {
 		}
 
 		TreeNode parent = outgroup.getParent();
+
+		String bootstrap1 = "";
+		String bootstrap2 = "";
+
+		if (!outgroup.isLeaf()) {
+			bootstrap1 = outgroup.getLabel();
+		}
+
+		bootstrap2 = parent.getLabel();
 
 		TreeNode _outgroup = copy(outgroup, null);
 
@@ -742,15 +752,11 @@ public final class TreeNodeUtil {
 			float parentBranchLength = parent.getLength();
 			TreeNode rerootedGrandParent = reroot(grandParent);
 			rerootedGrandParent.setLength(parentBranchLength);
+			rerootedGrandParent.setLabel(bootstrap2);
 			_sister.addChild(rerootedGrandParent);
-
-			rerootedGrandParent.setLabel(parent.getLabel());
-			// rerootedGrandParent.setLabel(grandParent.getLabel());
-
-			grandParent.addChild(parent);
 		}
 
-		// _sister.setLabel(parent.getLabel());
+		_sister.setLabel(bootstrap1);
 
 		return _root;
 	}
@@ -775,18 +781,35 @@ public final class TreeNodeUtil {
 
 		copy.setId(root.getId());
 		copy.setLabel(root.getLabel());
-		copy.setLength(root.getLength());
 		copy.setLevel(root.getLevel());
 
 		if (!root.isLeaf()) {
-
 			for (TreeNode child : root.getChildren()) {
 				if (child != exclude) {
-					TreeNode node = copy(child, exclude);
-					node.setParent(copy);
-					copy.addChild(node);
+					if (child.isLeaf()) {
+						TreeNode node = copy(child, exclude);
+						node.setParent(copy);
+						copy.addChild(node);
+						copy.setLength(child.getLength());
+					} else if (child.getChildrenCount() == 1) {
+						TreeNode child2 = null;
+						for (TreeNode child3 : child.getChildren()) {
+							child2 = child3;
+						}
+						TreeNode node = copy(child2, exclude);
+						node.setParent(copy);
+						copy.addChild(node);
+						copy.setLength(child.getLength() + child2.getLength());
+					} else if (child.getChildrenCount() >= 2) {
+						TreeNode node = copy(child, exclude);
+						node.setParent(copy);
+						copy.addChild(node);
+						copy.setLength(child.getLength());
+					}
 				}
 			}
+		} else {
+			copy.setLength(root.getLength());
 		}
 
 		return copy;
