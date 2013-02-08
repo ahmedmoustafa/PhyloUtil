@@ -727,4 +727,27 @@ public class TreeNode {
 
 		return list;
 	}
+	
+	/**
+	 * 
+	 * Performs a depth-first search (DFS) starting at the current node
+	 * 
+	 * @return <code>String</code> A string representation of the tree
+	 */
+	public Iterable<TreeNode> getNodes() {
+		List<TreeNode> nodes = new ArrayList<TreeNode>();
+		nodes.add(this);
+		if (!this.isLeaf()) {
+			Iterator<TreeNode> iterator = this.getSortedChildren().iterator();
+			TreeNode node = null;
+			while (iterator.hasNext()) {
+				node = iterator.next();
+				Iterable<TreeNode> nodes2 = node.getNodes();
+				for (TreeNode node2 : nodes2) {
+					nodes.add(node2);
+				}
+			}
+		}
+		return nodes;
+	}
 }

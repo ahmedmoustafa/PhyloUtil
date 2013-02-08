@@ -519,7 +519,7 @@ public class PhyloSort {
 									TreeNode outgroup = TreeNodeUtil.findOutgroup(tree, set);
 									if (outgroup != null) {
 										TreeNode rerooted = TreeNodeUtil.reroot(outgroup);
-										System.out.println ("Rerooted: " + rerooted.toString());
+										// System.out.println ("Rerooted: " + rerooted.toString());
 										tree2 = rerooted;
 									}
 								}
@@ -620,7 +620,7 @@ public class PhyloSort {
 									TreeNode outgroup = TreeNodeUtil.findOutgroup(tree, set);
 									if (outgroup != null) {
 										TreeNode rerooted = TreeNodeUtil.reroot(outgroup);
-										System.out.println ("Rerooted: " + rerooted.toString());
+										// System.out.println ("Rerooted: " + rerooted.toString());
 										tree2 = rerooted;
 									}
 								}
